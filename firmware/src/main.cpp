@@ -1,18 +1,26 @@
 #include <Arduino.h>
+#include <button.h>
 
-// put function declarations here:
-int myFunction(int, int);
+#include "config.h"
+
+#define len(arr) (sizeof(arr) / sizeof((arr)[0]))
+
+Button buttons[len(pins)];
 
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+    Serial.begin(BAUD);
+
+    for (uint8_t i = 0; i < len(buttons); i++) {
+        buttons[i] = Button(pins[i]);
+        pinMode(buttons[i].pin, INPUT_PULLUP);
+    }
+    Serial.println("streamdeck");
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-}
-
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+    for (uint8_t i = 0; i < len(buttons); i++) {
+        if (isPressed(buttons[i])) {
+            Serial.println(String("btn:") + i);
+        }
+    }
 }
