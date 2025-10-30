@@ -3,23 +3,23 @@ package it.rebo.deckino.model.impl;
 import it.rebo.deckino.model.api.Model;
 
 /**
- * Default implementation of {@link Model} storing a simple running flag.
+ * Default in-memory model holding a simple running flag.
+ *
+ * @since 1.0
  */
 public class AppModel implements Model {
 
-    private boolean running;
+    private volatile boolean running;
 
     /**
-     * Create a new model. The model is initially not running.
+     * Create a model in the running state.
      */
     public AppModel() {
-        this.running = false;
+        this.running = true;
     }
 
     /**
-     * Check if the model is running.
-     *
-     * @return true if running, false otherwise
+     * {@inheritDoc}
      */
     @Override
     public boolean isRunning() {
@@ -27,7 +27,7 @@ public class AppModel implements Model {
     }
 
     /**
-     * Stop the model by setting the running flag to false.
+     * {@inheritDoc}
      */
     @Override
     public void stop() {

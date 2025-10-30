@@ -1,19 +1,30 @@
 package it.rebo.deckino.model.api;
 
 /**
- * Simple model interface representing the application state.
+ * Application state holder and business logic facade.
+ *
+ * <p>
+ * The model exposes the running state and allows transitioning to a stopped
+ * state.
+ * </p>
+ *
+ * @since 1.0
  */
 public interface Model {
 
     /**
-     * Return true when the application is currently running.
+     * Indicates whether the application is currently running.
      *
-     * @return true if running, false otherwise
+     * @return {@code true} if running; {@code false} if stopped
      */
     boolean isRunning();
 
     /**
-     * Request the model to stop running.
+     * Transition the model to the stopped state, releasing resources if needed.
+     *
+     * <p>
+     * Implementations should be idempotent.
+     * </p>
      */
     void stop();
 

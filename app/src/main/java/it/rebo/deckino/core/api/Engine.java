@@ -1,22 +1,34 @@
 package it.rebo.deckino.core.api;
 
 /**
- * Simple engine interface that controls the application's lifecycle.
+ * Core engine responsible for driving the application lifecycle.
  *
  * <p>
- * Implementations should start processing in {@link #run()} and
- * stop when {@link #stop()} is called.
+ * An engine typically coordinates the controller and the view, running the
+ * main loop until a termination condition occurs, and providing a way to stop
+ * the application gracefully.
  * </p>
+ *
+ * @since 1.0
  */
 public interface Engine {
 
     /**
-     * Start or continue the engine's main loop or processing.
+     * Start the engine main loop.
+     *
+     * <p>
+     * Implementations may block the calling thread until the engine is
+     * stopped. They should return only after shutdown has been initiated.
+     * </p>
      */
     void run();
 
     /**
-     * Request the engine to stop and release any held resources.
+     * Stop the engine and trigger a graceful shutdown.
+     *
+     * <p>
+     * Implementations should be idempotent.
+     * </p>
      */
     void stop();
 

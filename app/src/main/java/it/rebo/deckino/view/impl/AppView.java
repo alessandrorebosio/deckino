@@ -11,13 +11,14 @@ import it.rebo.deckino.view.api.View;
  * Simple Swing-based view used by the application.
  *
  * <p>
- * This class extends {@link JFrame} and implements {@link View}.
- * It provides a small window titled "DECKINO" and a method to close it.
+ * Creates a small window titled by {@link #TITLE}.
  * </p>
+ *
+ * @since 1.0
  */
 public class AppView extends JFrame implements View {
 
-    public static final String TITLE = "DECKINO";
+    public static final String TITLE = "deckino";
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -28,18 +29,23 @@ public class AppView extends JFrame implements View {
     public AppView() {
         super(TITLE);
 
-        super.setDefaultCloseOperation(EXIT_ON_CLOSE);
         super.setLocationRelativeTo(null);
         super.setVisible(true);
         super.pack();
     }
 
     /**
-     * Close the view by posting a window closed event.
+     * {@inheritDoc}
+     *
+     * <p>
+     * Posts a window-closing event and disposes the frame to release UI
+     * resources.
+     * </p>
      */
     @Override
     public void close() {
-        this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSED));
+        this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+        this.dispose();
     }
 
 }

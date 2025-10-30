@@ -1,6 +1,10 @@
 package it.rebo.deckino.core.impl;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Objects;
+
+import javax.swing.JFrame;
 
 import it.rebo.deckino.controller.api.Controller;
 import it.rebo.deckino.controller.impl.AppController;
@@ -8,8 +12,14 @@ import it.rebo.deckino.core.api.Engine;
 import it.rebo.deckino.view.api.View;
 
 /**
- * Basic engine implementation that polls the controller and keeps the
- * application running while the model indicates it should run.
+ * Default engine implementation that coordinates controller and view.
+ *
+ * <p>
+ * If the provided {@link View} is also a {@link JFrame}, a window listener is
+ * installed to call {@link Controller#stop()} when the window is closing.
+ * </p>
+ *
+ * @since 1.0
  */
 public class AppEngine implements Engine {
 
@@ -17,16 +27,31 @@ public class AppEngine implements Engine {
     private final View view;
 
     /**
-     * Create an engine using the provided view.
+     * Create an engine bound to the given view.
      *
-     * @param view the view to close when stopping the engine
+     * @param view the UI view to control
+     * @throws NullPointerException if {@code view} is {@code null}
      */
     public AppEngine(final View view) {
-        this.view = Objects.requireNonNull(view);
+        this.view = Objects.requireNonNull(view, "The view cannot be null");
+
+        if (this.view instanceof final JFrame win) {
+            win.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(final WindowEvent e) {
+                    controller.stop();
+                }
+            });
+        }
     }
 
     /**
-     * Run the main loop until the controller reports the model is not running.
+     * {@inheritDoc}
+     *
+     * <p>
+     * Runs a simple loop that sleeps periodically while the controller is
+     * running; on interruption it terminates and proceeds to {@link #stop()}.
+     * </p>
      */
     @Override
     public void run() {
@@ -42,7 +67,11 @@ public class AppEngine implements Engine {
     }
 
     /**
-     * Stop the engine and close the associated view if present.
+     * {@inheritDoc}
+     *
+     * <p>
+     * Closes the associated view.
+     * </p>
      */
     @Override
     public void stop() {

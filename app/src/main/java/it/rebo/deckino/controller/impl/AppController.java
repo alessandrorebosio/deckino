@@ -7,30 +7,17 @@ import it.rebo.deckino.model.api.Model;
 import it.rebo.deckino.model.impl.AppModel;
 
 /**
- * Application controller that delegates state queries to an underlying Model.
+ * Application controller that delegates lifecycle operations and state queries
+ * to an underlying {@link Model}.
  *
- * <p>
- * This class implements {@code Controller} and acts as a thin wrapper around a
- * {@code Model} instance. It provides a default constructor that creates a new
- * {@code AppModel} and an alternate constructor that accepts an injected
- * {@code Model}
- * (useful for testing or swapping implementations).
- * </p>
- *
- * <p>
- * Currently the controller exposes {@link #isRunning()} which forwards to
- * {@link Model#isRunning()}.
- * </p>
- *
- * @see Controller
- * @see Model
+ * @since 1.0
  */
 public class AppController implements Controller {
 
     private final Model model;
 
     /**
-     * Create a controller.
+     * Create a controller using a default {@link AppModel} instance.
      */
     public AppController() {
         this(new AppModel());
@@ -40,19 +27,34 @@ public class AppController implements Controller {
      * Create a controller using the provided model.
      *
      * @param model the model to delegate to
+     * @throws NullPointerException if {@code model} is {@code null}
      */
     public AppController(final Model model) {
-        this.model = Objects.requireNonNull(model);
+        this.model = Objects.requireNonNull(model, "The model cannot be null");
     }
 
     /**
-     * Check whether the underlying model reports the application is running.
+     * {@inheritDoc}
      *
-     * @return true if the model is running, false otherwise
+     * <p>
+     * This implementation delegates to the underlying {@link Model}.
+     * </p>
      */
     @Override
     public boolean isRunning() {
         return this.model.isRunning();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * Delegates to {@link Model#stop()} to initiate a graceful shutdown.
+     * </p>
+     */
+    @Override
+    public void stop() {
+        this.model.stop();
     }
 
 }
