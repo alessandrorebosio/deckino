@@ -22,11 +22,11 @@ Button buttons[len(pins)];
 void setup() {
     Serial.begin(BAUD);
 
+    Serial.println(String("streamdeck:") + len(buttons));
     for (uint8_t i = 0; i < len(buttons); i++) {
         buttons[i] = Button(pins[i]);
         pinMode(buttons[i].pin, INPUT_PULLUP);
     }
-    Serial.println("streamdeck");
 }
 
 /**
