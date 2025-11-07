@@ -2,6 +2,7 @@ package it.rebo.deckino.controller.impl;
 
 import java.util.Objects;
 
+import it.rebo.deckino.config.impl.ConfigManager;
 import it.rebo.deckino.controller.api.Controller;
 import it.rebo.deckino.model.api.Model;
 import it.rebo.deckino.model.impl.AppModel;
@@ -47,6 +48,7 @@ public class AppController implements Controller {
      */
     @Override
     public void start() {
+        ConfigManager.initialize();
         this.model.start();
     }
 

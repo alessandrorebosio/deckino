@@ -39,6 +39,8 @@ dependencies {
 
     implementation("com.fazecast:jSerialComm:2.10.4")
 
+    implementation("com.google.code.gson:gson:2.13.2")
+
     /*
      * Simple Logging Facade for Java (SLF4J) with Apache Log4j
      * See: http://www.slf4j.org/
