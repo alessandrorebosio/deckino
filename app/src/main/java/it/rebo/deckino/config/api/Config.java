@@ -27,4 +27,23 @@ public interface Config {
      */
     Optional<Integer> baud();
 
+    /**
+     * Retrieves the value of a specific peripheral button from the configuration.
+     * 
+     * <p>
+     * This method looks up the specified button identifier in the peripheral
+     * configuration
+     * and returns its associated value if present and valid.
+     * </p>
+     *
+     * @param id the identifier of the button to retrieve (e.g., "btn:0",
+     *           "btn:1")
+     * @return an Optional containing the button value if the button exists and has
+     *         a non-blank value,
+     *         empty Optional if the button doesn't exist, has a null value, or has
+     *         a blank value
+     * @throws NullPointerException if the buttonId parameter is null
+     */
+    Optional<String> value(String id);
+
 }

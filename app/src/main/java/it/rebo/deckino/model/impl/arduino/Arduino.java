@@ -1,12 +1,12 @@
 package it.rebo.deckino.model.impl.arduino;
 
 import java.util.Objects;
-import java.util.Optional;
 
 import it.rebo.deckino.config.api.Config;
 import it.rebo.deckino.config.impl.ConfigManager;
 import it.rebo.deckino.model.api.device.Device;
 import it.rebo.deckino.model.api.serial.Connection;
+import it.rebo.deckino.model.impl.peripheral.execute.Executable;
 import it.rebo.deckino.model.impl.serial.SerialConnection;
 
 /**
@@ -52,17 +52,21 @@ public class Arduino implements Device {
     @Override
     public boolean ensureConnection() {
         if (this.connection.isConnected()) {
-            if (this.connection.isConnectionActive()) {
-                return Boolean.TRUE;
+            if (this.connection.isConnectionActive()
+                    && this.configuration.port()
+                            .map(port -> !this.connection.isPortSwitched(port))
+                            .orElse(false)) {
+                return true;
             }
+
             this.disconnect();
-            return Boolean.FALSE;
+            return false;
         }
 
         return this.isPortAvailable()
                 && this.configuration.port()
                         .map(port -> this.connection.connect(port, this.configuration.baud().orElse(DEFAULT_BAUDRATE)))
-                        .orElse(Boolean.FALSE);
+                        .orElse(false);
     }
 
     /**
@@ -82,7 +86,9 @@ public class Arduino implements Device {
      */
     @Override
     public void notifyAction() {
-        Optional.ofNullable(this.connection.receive()).ifPresent(System.out::print);
+        this.connection.receive()
+                .flatMap(this.configuration::value)
+                .ifPresent(value -> new Executable().execute(value));
     }
 
     /**
@@ -92,6 +98,7 @@ public class Arduino implements Device {
      */
     @Override
     public boolean isPortAvailable() {
-        return this.configuration.port().map(this.connection::isPortAvailable).orElse(Boolean.FALSE);
+        return this.configuration.port().map(this.connection::isPortAvailable).orElse(false);
     }
+
 }

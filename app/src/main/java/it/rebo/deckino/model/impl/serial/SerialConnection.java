@@ -3,6 +3,7 @@ package it.rebo.deckino.model.impl.serial;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.Optional;
 import java.util.Queue;
 
 import com.fazecast.jSerialComm.SerialPort;
@@ -65,9 +66,10 @@ public class SerialConnection implements Connection {
         if (this.isConnected()) {
             this.port.removeDataListener();
             this.receivedQueue.clear();
-        }
 
-        return this.port.closePort();
+            return this.port.closePort();
+        }
+        return true;
     }
 
     /**
@@ -88,6 +90,10 @@ public class SerialConnection implements Connection {
      */
     @Override
     public boolean isConnectionActive() {
+        if (!this.isConnected()) {
+            return false;
+        }
+
         try {
             this.port.getOutputStream().write('x');
             this.port.getOutputStream().flush();
@@ -95,6 +101,14 @@ public class SerialConnection implements Connection {
         } catch (final IOException e) {
             return false;
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isPortSwitched(final String portName) {
+        return this.port != null && !this.port.getSystemPortPath().equals(portName);
     }
 
     /**
@@ -123,8 +137,8 @@ public class SerialConnection implements Connection {
      * @return the received message, or null if no messages are available
      */
     @Override
-    public String receive() {
-        return this.receivedQueue.poll();
+    public Optional<String> receive() {
+        return Optional.ofNullable(this.receivedQueue.poll());
     }
 
     /**
@@ -132,6 +146,12 @@ public class SerialConnection implements Connection {
      * Listens for data available events and processes incoming data.
      */
     private final class SerialDataListener implements SerialPortDataListener {
+
+        private static final int MAX_MESSAGE_BUFFER = 4 * 1024;
+        private static final int INITIAL_MESSAGE_BUFFER = 256;
+
+        private char[] messageBuffer = new char[INITIAL_MESSAGE_BUFFER];
+        private int bufferLen;
 
         /**
          * Specifies the types of events this listener is interested in.
@@ -157,14 +177,39 @@ public class SerialConnection implements Connection {
 
             final int availableBytes = port.bytesAvailable();
             if (availableBytes > 0) {
-                final byte[] buffer = new byte[availableBytes];
-                final int bytesRead = port.readBytes(buffer, buffer.length);
+                final byte[] chunkBuffer = new byte[availableBytes];
+                final int bytesRead = port.readBytes(chunkBuffer, chunkBuffer.length);
 
                 if (bytesRead > 0) {
-                    final String received = new String(buffer, 0, bytesRead, StandardCharsets.UTF_8);
-                    receivedQueue.add(received);
+                    final String chunk = new String(chunkBuffer, 0, bytesRead, StandardCharsets.UTF_8);
+
+                    for (final char c : chunk.toCharArray()) {
+                        if (c == '\n' || c == '\r') {
+                            if (bufferLen > 0) {
+                                final String completeMessage = new String(messageBuffer, 0, bufferLen).trim();
+                                if (!completeMessage.isEmpty()) {
+                                    receivedQueue.add(completeMessage);
+                                }
+                                bufferLen = 0;
+                            }
+                        } else {
+                            if (bufferLen >= messageBuffer.length) {
+                                if (messageBuffer.length < MAX_MESSAGE_BUFFER) {
+                                    final int newSize = Math.min(messageBuffer.length * 2, MAX_MESSAGE_BUFFER);
+                                    final char[] newBuf = new char[newSize];
+                                    System.arraycopy(messageBuffer, 0, newBuf, 0, bufferLen);
+                                    messageBuffer = newBuf;
+                                } else {
+                                    bufferLen = 0;
+                                }
+                            }
+                            messageBuffer[bufferLen] = c;
+                            bufferLen++;
+                        }
+                    }
                 }
             }
         }
     }
+
 }

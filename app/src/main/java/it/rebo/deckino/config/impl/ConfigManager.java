@@ -85,6 +85,22 @@ public class ConfigManager implements Config {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<String> value(final String id) {
+        return this.getRawData("peripheral")
+                .filter(JsonElement::isJsonObject)
+                .map(JsonElement::getAsJsonObject)
+                .map(peripheral -> peripheral.get(id))
+                .filter(button -> button != null && button.isJsonObject())
+                .map(button -> button.getAsJsonObject().get("value"))
+                .filter(value -> value != null && value.isJsonPrimitive())
+                .map(JsonElement::getAsString)
+                .filter(value -> !value.isBlank());
+    }
+
+    /**
      * Retrieves the raw JSON element for the specified key from the configuration
      * file. This method reads the configuration file and extracts the JSON element
      * associated with the given key without performing any type conversion or

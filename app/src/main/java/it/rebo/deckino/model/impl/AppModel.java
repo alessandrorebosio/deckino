@@ -54,7 +54,7 @@ public class AppModel implements Model {
      */
     @Override
     public void start() {
-        this.running = Boolean.TRUE;
+        this.running = true;
     }
 
     /**
@@ -74,7 +74,7 @@ public class AppModel implements Model {
     @Override
     public void stop() {
         this.device.disconnect();
-        this.running = Boolean.FALSE;
+        this.running = false;
     }
 
 }

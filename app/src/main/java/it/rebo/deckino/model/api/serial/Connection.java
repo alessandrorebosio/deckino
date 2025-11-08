@@ -1,6 +1,8 @@
 package it.rebo.deckino.model.api.serial;
 
 import java.util.Arrays;
+import java.util.Optional;
+
 import com.fazecast.jSerialComm.SerialPort;
 
 /**
@@ -44,6 +46,18 @@ public interface Connection {
     boolean isConnectionActive();
 
     /**
+     * Checks if the current connection uses a different port than the specified
+     * one.
+     * Useful for detecting when the configured port has changed and reconnection is
+     * needed.
+     *
+     * @param portName the port name to compare against the current connection
+     * @return true if currently connected to a different port, false if same port
+     *         or not connected
+     */
+    boolean isPortSwitched(String portName);
+
+    /**
      * Sends a message through the serial connection.
      *
      * @param message the message to send
@@ -56,7 +70,7 @@ public interface Connection {
      *
      * @return the received message, or null if no messages are available
      */
-    String receive();
+    Optional<String> receive();
 
     /**
      * Checks if the specified serial port is available on the system.
