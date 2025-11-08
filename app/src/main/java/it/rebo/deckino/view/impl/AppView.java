@@ -2,32 +2,40 @@ package it.rebo.deckino.view.impl;
 
 import java.awt.event.WindowEvent;
 import java.io.Serial;
+import java.util.Optional;
 
 import javax.swing.JFrame;
-
 import it.rebo.deckino.view.api.View;
 
 /**
- * Simple Swing-based view used by the application.
- *
- * <p>
- * Creates a small window titled by {@link #TITLE}.
- * </p>
- *
+ * Swing-based implementation of the View interface.
+ * Represents the main application window with close handling functionality.
+ * 
+ * @author Alessandro Rebosio
  * @since 1.0
  */
 public class AppView extends JFrame implements View {
 
-    public static final String TITLE = "deckino";
-
     @Serial
     private static final long serialVersionUID = 1L;
 
+    private transient Optional<Runnable> onClose = Optional.empty();
+
     /**
-     * Create and show the application window.
+     * Constructs the application view with default settings.
+     * Sets up window properties and close handling behavior.
      */
     public AppView() {
-        super(TITLE);
+        super("deck.ino");
+
+        super.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+
+        super.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(final WindowEvent e) {
+                AppView.this.onClose.ifPresent(Runnable::run);
+            }
+        });
 
         super.setLocationRelativeTo(null);
         super.setVisible(true);
@@ -36,11 +44,16 @@ public class AppView extends JFrame implements View {
 
     /**
      * {@inheritDoc}
-     *
-     * <p>
-     * Posts a window-closing event and disposes the frame to release UI
-     * resources.
-     * </p>
+     */
+    @Override
+    public void setOnClose(final Runnable onClose) {
+        this.onClose = Optional.of(onClose);
+    }
+
+    /**
+     * {@inheritDoc}
+     * Closes the view by dispatching a window closing event and disposing the
+     * frame.
      */
     @Override
     public void close() {

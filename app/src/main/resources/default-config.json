@@ -1,0 +1,46 @@
+{
+    "version": 1.0,
+    "port": "",
+    "baud": 9600,
+    "peripheral": {
+        "btn:0": {
+            "value": ""
+        },
+        "btn:1": {
+            "value": ""
+        },
+        "btn:2": {
+            "value": ""
+        },
+        "btn:3": {
+            "value": ""
+        },
+        "btn:4": {
+            "value": ""
+        },
+        "btn:5": {
+            "value": ""
+        },
+        "btn:6": {
+            "value": ""
+        },
+        "btn:7": {
+            "value": ""
+        },
+        "btn:8": {
+            "value": ""
+        },
+        "btn:9": {
+            "value": ""
+        },
+        "btn:10": {
+            "value": ""
+        },
+        "btn:11": {
+            "value": ""
+        },
+        "btn:12": {
+            "value": ""
+        }
+    }
+}

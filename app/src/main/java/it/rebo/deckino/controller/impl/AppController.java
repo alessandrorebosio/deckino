@@ -2,14 +2,16 @@ package it.rebo.deckino.controller.impl;
 
 import java.util.Objects;
 
+import it.rebo.deckino.config.impl.ConfigManager;
 import it.rebo.deckino.controller.api.Controller;
 import it.rebo.deckino.model.api.Model;
 import it.rebo.deckino.model.impl.AppModel;
 
 /**
- * Application controller that delegates lifecycle operations and state queries
- * to an underlying {@link Model}.
- *
+ * Implementation of the Controller interface that manages the application state
+ * by delegating operations to a Model instance.
+ * 
+ * @author Alessandro Rebosio
  * @since 1.0
  */
 public class AppController implements Controller {
@@ -17,28 +19,24 @@ public class AppController implements Controller {
     private final Model model;
 
     /**
-     * Create a controller using a default {@link AppModel} instance.
+     * Constructs an AppController with a default AppModel.
      */
     public AppController() {
         this(new AppModel());
     }
 
     /**
-     * Create a controller using the provided model.
+     * Constructs an AppController with the specified model.
      *
-     * @param model the model to delegate to
-     * @throws NullPointerException if {@code model} is {@code null}
+     * @param model the model to be used by this controller, cannot be null
+     * @throws NullPointerException if the model is null
      */
     public AppController(final Model model) {
-        this.model = Objects.requireNonNull(model, "The model cannot be null");
+        this.model = Objects.requireNonNull(model, "The model cannot be null.");
     }
 
     /**
      * {@inheritDoc}
-     *
-     * <p>
-     * This implementation delegates to the underlying {@link Model}.
-     * </p>
      */
     @Override
     public boolean isRunning() {
@@ -47,10 +45,23 @@ public class AppController implements Controller {
 
     /**
      * {@inheritDoc}
-     *
-     * <p>
-     * Delegates to {@link Model#stop()} to initiate a graceful shutdown.
-     * </p>
+     */
+    @Override
+    public void start() {
+        ConfigManager.initialize();
+        this.model.start();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void handleDevie() {
+        this.model.handleDevie();
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public void stop() {

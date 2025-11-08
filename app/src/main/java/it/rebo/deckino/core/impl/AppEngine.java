@@ -1,63 +1,54 @@
 package it.rebo.deckino.core.impl;
 
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.Objects;
 
-import javax.swing.JFrame;
-
 import it.rebo.deckino.controller.api.Controller;
-import it.rebo.deckino.controller.impl.AppController;
 import it.rebo.deckino.core.api.Engine;
 import it.rebo.deckino.view.api.View;
 
 /**
- * Default engine implementation that coordinates controller and view.
- *
- * <p>
- * If the provided {@link View} is also a {@link JFrame}, a window listener is
- * installed to call {@link Controller#stop()} when the window is closing.
- * </p>
- *
+ * Implementation of the Engine interface that manages the main application
+ * loop.
+ * Coordinates between the controller and view components.
+ * 
+ * @author Alessandro Rebosio
  * @since 1.0
  */
 public class AppEngine implements Engine {
 
-    private final Controller controller = new AppController();
+    private static final long PERIOD = 100;
+
+    private final Controller controller;
     private final View view;
 
     /**
-     * Create an engine bound to the given view.
+     * Constructs an AppEngine with the specified controller and view.
      *
-     * @param view the UI view to control
-     * @throws NullPointerException if {@code view} is {@code null}
+     * @param controller the controller to be used, cannot be null
+     * @param view       the view to be used, cannot be null
+     * @throws NullPointerException if controller or view is null
      */
-    public AppEngine(final View view) {
-        this.view = Objects.requireNonNull(view, "The view cannot be null");
+    public AppEngine(final Controller controller, final View view) {
+        this.controller = Objects.requireNonNull(controller, "The controller cannot be null.");
+        this.view = Objects.requireNonNull(view, "The view cannot be null.");
 
-        if (this.view instanceof final JFrame win) {
-            win.addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosing(final WindowEvent e) {
-                    controller.stop();
-                }
-            });
-        }
+        this.view.setOnClose(this.controller::stop);
     }
 
     /**
      * {@inheritDoc}
-     *
-     * <p>
-     * Runs a simple loop that sleeps periodically while the controller is
-     * running; on interruption it terminates and proceeds to {@link #stop()}.
-     * </p>
+     * Starts the main application loop which runs until the controller stops.
+     * The loop sleeps for a fixed period between iterations.
      */
     @Override
     public void run() {
+        this.controller.start();
+
         while (this.controller.isRunning()) {
             try {
-                Thread.sleep(100);
+                this.controller.handleDevie();
+
+                Thread.sleep(PERIOD);
             } catch (final InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;
@@ -68,10 +59,7 @@ public class AppEngine implements Engine {
 
     /**
      * {@inheritDoc}
-     *
-     * <p>
-     * Closes the associated view.
-     * </p>
+     * Stops the engine by closing the view.
      */
     @Override
     public void stop() {

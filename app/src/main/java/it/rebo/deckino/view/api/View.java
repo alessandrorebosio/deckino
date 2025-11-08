@@ -1,19 +1,23 @@
 package it.rebo.deckino.view.api;
 
 /**
- * Minimal view interface used by the application to represent a UI.
- *
+ * Interface representing a view component in the application.
+ * Provides methods to handle close events and programmatically close the view.
+ * 
+ * @author Alessandro Rebosio
  * @since 1.0
  */
-@FunctionalInterface
 public interface View {
 
     /**
-     * Close the view and release UI resources.
+     * Sets a callback to be executed when the view is requested to close.
      *
-     * <p>
-     * Implementations should be idempotent.
-     * </p>
+     * @param onClose the runnable to execute on close event, cannot be null
+     */
+    void setOnClose(Runnable onClose);
+
+    /**
+     * Closes the view and releases any associated resources.
      */
     void close();
 

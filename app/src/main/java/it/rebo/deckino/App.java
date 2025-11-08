@@ -1,15 +1,13 @@
 package it.rebo.deckino;
 
+import it.rebo.deckino.controller.impl.AppController;
 import it.rebo.deckino.core.impl.AppEngine;
 import it.rebo.deckino.view.impl.AppView;
 
 /**
- * Application entry point.
- *
- * <p>
- * Creates an {@link AppEngine} with a {@link AppView} and starts it.
- * </p>
- *
+ * Entry point of the app.
+ * 
+ * @author Alessandro Rebosio
  * @since 1.0
  */
 public final class App {
@@ -23,6 +21,6 @@ public final class App {
      * @param args unused
      */
     public static void main(final String[] args) {
-        new AppEngine(new AppView()).run();
+        new AppEngine(new AppController(), new AppView()).run();
     }
 }
