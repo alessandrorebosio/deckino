@@ -24,6 +24,12 @@ public interface Controller {
     void start();
 
     /**
+     * Manages the device connection and handles messages received from the serial
+     * interface.
+     */
+    void handleDevie();
+
+    /**
      * Stops the controller and ends its operation.
      */
     void stop();

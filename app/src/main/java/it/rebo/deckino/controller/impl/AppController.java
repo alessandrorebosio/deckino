@@ -56,6 +56,14 @@ public class AppController implements Controller {
      * {@inheritDoc}
      */
     @Override
+    public void handleDevie() {
+        this.model.handleDevie();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void stop() {
         this.model.stop();
     }

@@ -46,6 +46,8 @@ public class AppEngine implements Engine {
 
         while (this.controller.isRunning()) {
             try {
+                this.controller.handleDevie();
+
                 Thread.sleep(PERIOD);
             } catch (final InterruptedException e) {
                 Thread.currentThread().interrupt();

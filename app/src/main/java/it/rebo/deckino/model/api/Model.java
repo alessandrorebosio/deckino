@@ -22,6 +22,11 @@ public interface Model {
     void start();
 
     /**
+     * Ensure the underlying device is connected and responsive.
+     */
+    void handleDevie();
+
+    /**
      * Stops the model and sets it to not running state.
      */
     void stop();
