@@ -30,7 +30,7 @@ public interface Action {
     static Action of(final String type, final String value) {
         try {
             final Class<?> clazz = Class
-                    .forName("it.rebo.deckino.model.impl.action." + type.toLowerCase(Locale.getDefault()) + "."
+                    .forName("it.rebo.deckino.model.impl.action." + type.toLowerCase(Locale.ROOT) + "."
                             + capitalize(type));
             return (Action) clazz.getDeclaredConstructor(String.class).newInstance(value);
         } catch (final ClassNotFoundException | NoSuchMethodException | InstantiationException
@@ -51,7 +51,7 @@ public interface Action {
      * @throws StringIndexOutOfBoundsException if the string is empty
      */
     private static String capitalize(final String str) {
-        return str.substring(0, 1).toUpperCase(Locale.getDefault()) + str.substring(1).toLowerCase(Locale.getDefault());
+        return str.substring(0, 1).toUpperCase(Locale.ROOT) + str.substring(1);
     }
 
 }
