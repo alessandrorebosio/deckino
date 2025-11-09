@@ -1,6 +1,7 @@
 package it.rebo.deckino.model.impl.action.execute;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Locale;
 
 import it.rebo.deckino.model.impl.action.AbstractAction;
@@ -29,7 +30,7 @@ public class Execute extends AbstractAction {
      * @throws IOException if an I/O error occurs during process execution
      */
     @Override
-    protected void perform(final String value) throws IOException {
+    protected void perform(final String value) throws IOException, URISyntaxException {
         this.buildLauncher(value).start();
     }
 
@@ -40,7 +41,7 @@ public class Execute extends AbstractAction {
      * @return a process builder configured to launch the executable
      */
     private ProcessBuilder buildLauncher(final String path) {
-        if (System.getProperty("os.name").toLowerCase(Locale.getDefault()).contains("mac")) {
+        if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("mac")) {
             return new ProcessBuilder("open", path);
         }
         return new ProcessBuilder(path);
